@@ -1,0 +1,28 @@
+:host {
+	display: block;
+}
+
+.hand-container {
+	position: relative;
+	white-space: nowrap;
+	border: 1px solid lightblue;
+	height: 200px;
+	list-style-type: none;
+
+	.card-in-hand {
+		position: absolute;
+		left: calc(100%);
+		top: 100px;
+		transform: scale(0.5);
+	}
+}
+
+.card {
+	border: 1px solid black;
+	width: 150px;
+	height: 200px;
+
+	&.animation {
+		transition: all 0.5s ease;
+	}
+}

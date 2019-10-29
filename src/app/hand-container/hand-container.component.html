@@ -1,0 +1,6 @@
+<div class="hand-container">
+  <div *ngFor="let card of cards$ | async; index as i; trackBy: i" class="card animation card-in-hand" [ngStyle]="card.style">
+    {{i}}
+  </div>
+</div>
+

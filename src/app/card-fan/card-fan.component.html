@@ -1,0 +1,6 @@
+<app-hand-container [cards$]="sharedDataService.hand$"
+					(click)="sharedDataService.drawCard(54, true)" style="height: 100vh;">
+	<ng-template #cardTemplate let-card let-index="index">
+		<img [src]="this.defaultCardBack" style="height: 100%; width: 100%"/>
+	</ng-template>
+</app-hand-container>

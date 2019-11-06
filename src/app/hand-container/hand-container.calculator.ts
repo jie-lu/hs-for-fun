@@ -1,27 +1,16 @@
-export interface Point {
-	x: number,
-	y: number
-}
-
-export interface Transform {
-	rotationX: number
-}
-
-export interface Size {
-	width: number,
-	height: number
-}
+import { Point, Transform, Size } from '../shared-models/calculation-models'
 
 export class HandContainerCalculator {
 	// Settings for calculating card position.
-	curveAngle: number = 20; // 20 degree
-	maxCards: number = 10; // max number of cards
-	cardSize: Size = {
+	private curveAngle: number = 20; // 20 degree
+	private maxCards: number = 10; // max number of cards
+	private cardSize: Size = {
 	  width: 150,
 	  height: 200
 	};
+	private cardMarginX = 10;
+
 	containerSize: Size;
-	cardMarginX = 10;
 
 	private toRadian (degree) {
 		return degree * Math.PI / 180;
@@ -66,6 +55,6 @@ export class HandContainerCalculator {
 
 		return {
 			rotationX: rotationX
-		}	
+		}
 	}
 }

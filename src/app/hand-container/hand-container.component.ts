@@ -1,7 +1,8 @@
-import { Component, Input, OnInit, OnDestroy, ElementRef, HostListener, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ElementRef, HostListener, ContentChild, ChangeDetectionStrategy, ChangeDetectorRef, TemplateRef } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as calc from './hand-container.calculator';
+import { FanCalculator } from '../style-calculators/fan-calculator';
 
 @Component({
   selector: 'app-hand-container',
@@ -13,7 +14,8 @@ export class HandContainerComponent implements OnInit, OnDestroy {
   @Input() cards$:Observable<any[]>;
 
   private cards: any[];
-  private _calculator = new calc.HandContainerCalculator();
+  //private _calculator = new calc.HandContainerCalculator();
+  private _calculator = new FanCalculator();
   private _onDestroy$ = new Subject<void>();
 
   constructor(private el:ElementRef, private changeDetectorRef: ChangeDetectorRef) {}
@@ -23,13 +25,7 @@ export class HandContainerComponent implements OnInit, OnDestroy {
 
     this.cards$.pipe(
       takeUntil(this._onDestroy$)
-    ).subscribe((items) => {
-      this.cards = items;
-      setTimeout(() => {
-        this.updateCardPosition();
-        this.changeDetectorRef.detectChanges();
-      }, 0);
-    });
+    ).subscribe((items) => this.onCardsChanged(items));
   }
 
   ngOnDestroy() {
@@ -37,11 +33,21 @@ export class HandContainerComponent implements OnInit, OnDestroy {
     this._onDestroy$.complete();
   }
 
+  @ContentChild('cardTemplate', {static: false}) cardTemplate : TemplateRef<any>;
+
   @HostListener('window:resize')
   onResize()
   {
     this.initContainerSize();
-    this.updateCardPosition();
+    this.updateCards();
+  }
+
+  private onCardsChanged(items: any[]) {
+    this.cards = items;
+    setTimeout(() => {
+      this.updateCards();
+      this.changeDetectorRef.detectChanges();
+    }, 0);
   }
 
   private initContainerSize() {
@@ -51,15 +57,11 @@ export class HandContainerComponent implements OnInit, OnDestroy {
     };
   }
 
-  private updateCardPosition() {
+  private updateCards() {
     this.cards.forEach((card, i) => {
-      let pos = this._calculator.calculatePosition(i, this.cards.length);
-      let trans = this._calculator.calculateTransform(i, this.cards.length);
-      card.style = {
-        'left.px': pos.x,
-        'top.px': pos.y,
-        'transform': `rotate(${trans.rotationX}deg)`
-      }
+      let style = this._calculator.calculateTransform(i, this.cards.length);
+
+      card.style = style;
     });
   }
 }

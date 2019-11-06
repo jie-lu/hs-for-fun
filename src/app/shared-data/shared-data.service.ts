@@ -10,8 +10,14 @@ export class SharedDataService {
 
   hand$ = this._handSource.asObservable();
 
-  drawCard() {
-    this._cards = [...this._cards, {}];
+  drawCard(count: number = 1, clearExisting: boolean = false) {
+    let added = new Array(count).fill(undefined).map(() => ({}));
+    if(clearExisting) {
+      this._cards = added;
+    } else {
+      this._cards = this._cards.concat(added);
+    }
+
     this._handSource.next(this._cards);
   }
 }

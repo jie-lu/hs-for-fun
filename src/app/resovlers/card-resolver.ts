@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { delay } from 'rxjs/operators';
 
 @Injectable()
 export class CardResolver implements Resolve<any> {
@@ -13,6 +14,6 @@ export class CardResolver implements Resolve<any> {
 				Accept: '*/*'
 			},
 			responseType: 'arraybuffer'
-		});
+		}).pipe(delay(1000));
 	}
 }

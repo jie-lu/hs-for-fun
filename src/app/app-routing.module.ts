@@ -5,8 +5,11 @@ import { CardResolver } from './resovlers/card-resolver';
 import { CardFanComponent } from './card-fan/card-fan.component';
 
 
-const routes: Routes = [
-{ path:'', pathMatch: 'full', redirectTo: 'home' }, { 
+const routes: Routes = [{ 
+  path:'',
+  pathMatch: 'full',
+  redirectTo: 'home' 
+}, { 
   path: 'home',
   component: CardFanComponent,
   resolve: {

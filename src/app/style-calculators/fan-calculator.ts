@@ -1,7 +1,6 @@
 import { Point, Transform, Size } from '../shared-models/calculation-models'
 
 export class FanCalculator {
-	fanAngle : number = 360;
 	containerSize: Size;
 	cardSize: Size = {
 		width: 150,
@@ -13,7 +12,7 @@ export class FanCalculator {
 		return null;
 	}
 
-	calculateTransform(i: number, count: number, initOnly: boolean = false) : object
+	calculateStyle(i: number, count: number, fanAngle: number, initOnly: boolean = false) : object
 	{
 		let ret = {
 			'width': `${this.cardSize.width}px`,
@@ -28,7 +27,7 @@ export class FanCalculator {
 		};
 
 		if (!initOnly) {
-			let rotationX = i * this.fanAngle / count;
+			let rotationX = i * fanAngle / count;
 			ret.transform = `rotate(${rotationX}deg)`;
 		}
 

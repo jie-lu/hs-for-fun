@@ -17,6 +17,7 @@ export class HandContainerComponent implements OnInit, OnDestroy {
   private _calculator = new FanCalculator();
   private _onDestroy$ = new Subject<void>();
   private _touchStartPt: Point = null;
+  private _fanAngle: number = 0;
 
   constructor(private el:ElementRef, private changeDetectorRef: ChangeDetectorRef) {}
 
@@ -46,7 +47,7 @@ export class HandContainerComponent implements OnInit, OnDestroy {
   onResize()
   {
     this.initContainerSize();
-    this.updateCards();
+    this.updateCards(false, null, this._fanAngle);
   }
 
   @HostListener('mousedown', ['$event'])
@@ -64,7 +65,8 @@ export class HandContainerComponent implements OnInit, OnDestroy {
     if(this._touchStartPt === null) return;
 
     let dx = ev.screenX - this._touchStartPt.x;
-    this.updateCards(false, null, 360 / (this._calculator.containerSize.width / 2) * dx);
+    this._fanAngle = 360 / (this._calculator.containerSize.width / 2) * dx
+    this.updateCards(false, null, this._fanAngle);
   }
 
   @HostListener('mouseup')

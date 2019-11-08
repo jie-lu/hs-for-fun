@@ -97,7 +97,7 @@ export class HandContainerComponent implements OnInit, OnDestroy {
     
     if(pointSide * this._sideOfPointToLine < 0) {
       if(this._sideOfPointToLine > 0) {
-        angle = - (360 - angle);
+        angle = - (360 + angle);
       } else {
         angle = (360 - angle);
       }

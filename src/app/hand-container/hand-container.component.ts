@@ -50,33 +50,90 @@ export class HandContainerComponent implements OnInit, OnDestroy {
     this.updateCards(false, null, this._fanAngle);
   }
 
-  @HostListener('mousedown', ['$event'])
-  onMouseDown(ev) {
-    ev.preventDefault();
-    this._touchStartPt = {
-      x: ev.screenX,
-      y: ev.screenY
-    };
+  private resetFan() {
     this.updateCards(true);
   }
 
-  @HostListener('mousemove', ['$event'])
-  onMouseMove(ev) {
+  private beginFanning(x: number, y: number) {
+    this._touchStartPt = {
+      x: x,
+      y: y
+    };
+  }
+
+  private performFanning(x: number, y: number) {
     if(this._touchStartPt === null) return;
 
-    let dx = ev.screenX - this._touchStartPt.x;
+    let dx = x - this._touchStartPt.x;
     this._fanAngle = 360 / (this._calculator.containerSize.width / 2) * dx
     this.updateCards(false, null, this._fanAngle);
   }
 
+  private stopFanning() {
+    this._touchStartPt = null;
+  }
+
+  @HostListener('touchstart', ['$event'])
+  onTouchStart(ev: TouchEvent)
+  {
+    ev.preventDefault();
+
+    if(ev.changedTouches.length !== 1) return;
+
+    this.resetFan();
+
+    let touch = ev.changedTouches[0];
+    this.beginFanning(touch.screenX, touch.screenY);
+  }
+
+  @HostListener('touchmove', ['$event'])
+  onTouchMove(ev: TouchEvent)
+  {
+    ev.preventDefault();
+
+    if(ev.changedTouches.length !== 1) return;
+
+    let touch = ev.changedTouches[0];
+    this.performFanning(touch.screenX, touch.screenY);
+  }
+
+  @HostListener('touchend', ['$event'])
+  onTouchEnd(ev: TouchEvent)
+  {
+    ev.preventDefault();
+
+    this.stopFanning();
+  }
+
+  @HostListener('touchcancel', ['$event'])
+  onTouchCancel(ev: TouchEvent)
+  {
+    ev.preventDefault();
+
+    this.stopFanning();
+  }
+
+  @HostListener('mousedown', ['$event'])
+  onMouseDown(ev) {
+    ev.preventDefault();
+
+    this.resetFan();
+    this.beginFanning(ev.screenX, ev.screenY);
+  }
+
+  @HostListener('mousemove', ['$event'])
+  onMouseMove(ev) {
+    this.performFanning(ev.screenX, ev.screenY);
+  }
+
   @HostListener('mouseup')
   onMouseUp() {
-    this._touchStartPt = null;
+    this.stopFanning();
   }
 
   @HostListener('mouseleave')
   onMouseLeave() {
-    this._touchStartPt = null;
+    this.stopFanning();
   }
 
   private onCardsChanged(items: any[], initOnly: boolean = false) {

@@ -4,6 +4,17 @@ import { takeUntil } from 'rxjs/operators';
 import { FanCalculator } from '../style-calculators/fan-calculator';
 import { Point } from '../shared-models/calculation-models';
 
+enum MovingDirection {
+  None = 0,
+  Left,
+  Right
+}
+
+interface DirectionChange {
+  direction: MovingDirection,
+  angle: number
+}
+
 @Component({
   selector: 'app-hand-container',
   templateUrl: './hand-container.component.html',
@@ -18,7 +29,9 @@ export class HandContainerComponent implements OnInit, OnDestroy {
   private _onDestroy$ = new Subject<void>();
   private _touchStartPt: Point = null;
   private _fanAngle: number = 0;
-  private _sideOfPointToLine: number = 0;
+  
+  private _initialMovingDirection = MovingDirection.None;
+  private _directionChanges: DirectionChange[] = [];
   private _containerCenter: Point;
 
   constructor(private el:ElementRef, private changeDetectorRef: ChangeDetectorRef) {}
@@ -76,41 +89,79 @@ export class HandContainerComponent implements OnInit, OnDestroy {
     return Math.acos((d12 * d12 + d13 * d13 - d23 * d23) / (2 * d12 * d13)) / Math.PI * 180;
   }
 
-  private sideOfPointToLine(a: Point, b: Point, pt: Point){
-    return ((b.x - a.x)*(pt.y - a.y) - (b.y - a.y) * (pt.x - a.x));
+  private sideOfPointToLine(a: Point, b: Point, pt: Point) : MovingDirection{
+    let r = ((b.x - a.x)*(pt.y - a.y) - (b.y - a.y) * (pt.x - a.x));
+    if(r === 0) return MovingDirection.None;
+    else if(r < 0) return MovingDirection.Left;
+    else return MovingDirection.Right;
+  }
+
+  private trackDirectionChange(currentChange: DirectionChange) {
+    if(this._directionChanges.length === 0) {
+      this._directionChanges.push(currentChange);
+    } else {
+      let lastChange = this._directionChanges[this._directionChanges.length - 1];
+
+      // Direction changed
+      if(currentChange.direction !== lastChange.direction) {
+        if(currentChange.angle === lastChange.angle) {
+          if(this._directionChanges.length === 1) {
+            this._directionChanges[0] = currentChange;
+          } else {
+            this._directionChanges.pop();
+          }
+        } else {
+          this._directionChanges.push(currentChange);
+        }
+      }
+    }
+
+    return this._directionChanges[this._directionChanges.length - 1];
+  }
+
+  private adjustAngle(angle: number): number {
+    let currentChange = this._directionChanges[this._directionChanges.length - 1];
+    let rounds = Math.floor((this._directionChanges.length - 1) / 2);
+    if(this._directionChanges.length % 2 === 1) {
+      angle = angle + 360 * rounds;
+      if(currentChange.direction === MovingDirection.Left) {
+        angle = - angle;
+      }
+    }
+    else {
+      if(currentChange.direction === MovingDirection.Left) {
+        angle = (360 - angle) + 360 * rounds;
+      } else {
+        angle = - (360 - angle) - 360 * rounds;
+      }
+    }
+
+    return angle;
   }
 
   private performFanning(pt: Point) {
     if(this._touchStartPt === null) return;
 
-    //let dx = x - this._touchStartPt.x;
-    //this._fanAngle = 360 / (this._calculator.containerSize.width / 2) * dx
     let angle = this.angle(this._containerCenter, this._touchStartPt, pt);
-    let pointSide = this.sideOfPointToLine(this._touchStartPt, this._containerCenter, pt);
-    if(this._sideOfPointToLine === 0) {
-      this._sideOfPointToLine = pointSide;
+    let currectDirection = this.sideOfPointToLine(this._containerCenter, this._touchStartPt, pt);
+    if(this._initialMovingDirection === MovingDirection.None) {
+      this._initialMovingDirection = currectDirection;
     } 
-    
-    if(this._sideOfPointToLine > 0) {
-      angle = -angle;
-    }
-    
-    if(pointSide * this._sideOfPointToLine < 0) {
-      if(this._sideOfPointToLine > 0) {
-        angle = - (360 + angle);
-      } else {
-        angle = (360 - angle);
-      }
-    }
-    this._fanAngle = angle;
-    this.updateCards(false, null, this._fanAngle);
 
-    
+    let currentChange = {
+      direction: currectDirection,
+      angle: Math.abs(angle % 360) < 10 ? 0 : 180
+    }
+
+    this.trackDirectionChange(currentChange);
+    this._fanAngle = this.adjustAngle(angle);
+    this.updateCards(false, null, this._fanAngle);
   }
 
   private stopFanning() {
     this._touchStartPt = null;
-    this._sideOfPointToLine = 0;
+    this._initialMovingDirection = MovingDirection.None;
+    this._directionChanges = [];
   }
 
   @HostListener('touchstart', ['$event'])

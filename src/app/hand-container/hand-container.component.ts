@@ -150,7 +150,7 @@ export class HandContainerComponent implements OnInit, OnDestroy {
 
     let currentChange = {
       direction: currectDirection,
-      angle: Math.abs(angle % 360) < 10 ? 0 : 180
+      angle: Math.abs(angle % 360) < 90 ? 0 : 180
     }
 
     this.trackDirectionChange(currentChange);

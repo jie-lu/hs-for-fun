@@ -139,6 +139,21 @@ export class HandContainerComponent implements OnInit, OnDestroy {
     this.updateCards(true, null, 0, 1);
   }
 
+  private resetIfDoubleTapped(): boolean {
+    let lastTapTime = this._lastTapTime;
+    this._lastTapTime = Date.now();
+    if(lastTapTime){
+      let timeDiff = this._lastTapTime - lastTapTime;
+      if(timeDiff < 600) {
+        this.stopFanning();
+        this.resetFan();
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   private beginFanning(pt: Point) {
     this._touchStartPt = pt;
   }
@@ -171,16 +186,7 @@ export class HandContainerComponent implements OnInit, OnDestroy {
 
     ev.preventDefault();
   
-    let lastTapTime = this._lastTapTime;
-    this._lastTapTime = Date.now();
-    if(lastTapTime){
-      let timeDiff = this._lastTapTime - lastTapTime;
-      if(timeDiff < 600) {
-        this.stopFanning();
-        this.resetFan();
-        return;
-      }
-    }
+    if(this.resetIfDoubleTapped()) return;
 
     let touch = ev.touches[0];
     this.beginFanning({x: touch.clientX, y: touch.clientY});
@@ -212,6 +218,9 @@ export class HandContainerComponent implements OnInit, OnDestroy {
   @HostListener('mousedown', ['$event'])
   onMouseDown(ev) {
     ev.preventDefault(); // Prevent dragging image
+
+    if(this.resetIfDoubleTapped()) return;
+    
     this.beginFanning({ x: ev.clientX, y: ev.clientY });
   }
 

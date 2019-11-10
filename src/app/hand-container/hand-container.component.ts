@@ -39,10 +39,10 @@ export class HandContainerComponent implements OnInit, OnDestroy {
 
   private initContainerSize() {
     let containerRect = this.el.nativeElement.getBoundingClientRect();
-    this._calculator.containerSize = {
+    this._calculator.setContainerSize({
       width: this.el.nativeElement.clientWidth,
       height: this.el.nativeElement.clientHeight
-    };
+    });
     this._containerCenter = {
       x: this.el.nativeElement.clientWidth / 2,
       y: this.el.nativeElement.clientHeight / 2
@@ -220,7 +220,7 @@ export class HandContainerComponent implements OnInit, OnDestroy {
     ev.preventDefault(); // Prevent dragging image
 
     if(this.resetIfDoubleTapped()) return;
-    
+
     this.beginFanning({ x: ev.clientX, y: ev.clientY });
   }
 

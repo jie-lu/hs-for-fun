@@ -8,6 +8,15 @@ export class FanCalculator {
 	}
 	total: number = 54;
 
+	setContainerSize(size: Size) {
+		this.containerSize = size;
+		let w = Math.max(20, Math.min(this.containerSize.width, this.containerSize.height) - 40);
+		this.cardSize = {
+			width: w / 2 * 0.75,
+			height: w / 2
+		};
+	}
+
 	calculatePosition(i: number, count: number) : Point {
 		return null;
 	}

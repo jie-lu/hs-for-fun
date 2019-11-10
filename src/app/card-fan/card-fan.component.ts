@@ -9,7 +9,8 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   styleUrls: ['./card-fan.component.less']
 })
 export class CardFanComponent implements OnInit {
-  defaultCardBack: SafeUrl;
+  defaultCardBack: any;
+  cardBack: any;
 
   constructor(public sharedDataService: SharedDataService,
     private activatedRoute: ActivatedRoute,
@@ -27,7 +28,17 @@ export class CardFanComponent implements OnInit {
   ngOnInit() {
     let data = this.activatedRoute.snapshot.data['defaultCardBack'];
     this.defaultCardBack = this.convertImageToBase64(data);
-
+    this.cardBack = this.defaultCardBack;
     this.sharedDataService.drawCard(54);
+  }
+
+  onCardBackChanged(ev) {
+    if(ev.target.files.length == 0) return;
+
+    let fileReader = new FileReader();
+    fileReader.onload = () => {
+      this.cardBack = fileReader.result;
+    };
+    fileReader.readAsDataURL(ev.target.files[0]);
   }
 }

@@ -28,7 +28,8 @@ export class HandContainerComponent implements OnInit, OnDestroy {
   private _calculator = new FanCalculator();
   private _onDestroy$ = new Subject<void>();
   private _touchStartPt: Point = null;
-  private _fanAngle: number = 0;
+  private _fanAngle = 0;
+  private _lastFanAngle = 0;
   
   private _initialMovingDirection = MovingDirection.None;
   private _directionChanges: DirectionChange[] = [];
@@ -68,14 +69,6 @@ export class HandContainerComponent implements OnInit, OnDestroy {
   {
     this.initContainerSize();
     this.updateCards(false, null, this._fanAngle);
-  }
-
-  private resetFan() {
-    this.updateCards(true);
-  }
-
-  private beginFanning(pt: Point) {
-    this._touchStartPt = pt;
   }
 
   private distance(pt1: Point, pt2: Point) {
@@ -136,7 +129,15 @@ export class HandContainerComponent implements OnInit, OnDestroy {
       }
     }
 
-    return angle;
+    return angle + this._lastFanAngle;
+  }
+
+  private resetFan() {
+    this.updateCards(true);
+  }
+
+  private beginFanning(pt: Point) {
+    this._touchStartPt = pt;
   }
 
   private performFanning(pt: Point) {
@@ -144,10 +145,6 @@ export class HandContainerComponent implements OnInit, OnDestroy {
 
     let angle = this.angle(this._containerCenter, this._touchStartPt, pt);
     let currectDirection = this.sideOfPointToLine(this._containerCenter, this._touchStartPt, pt);
-    if(this._initialMovingDirection === MovingDirection.None) {
-      this._initialMovingDirection = currectDirection;
-    } 
-
     let currentChange = {
       direction: currectDirection,
       angle: Math.abs(angle % 360) < 90 ? 0 : 180
@@ -160,55 +157,47 @@ export class HandContainerComponent implements OnInit, OnDestroy {
 
   private stopFanning() {
     this._touchStartPt = null;
-    this._initialMovingDirection = MovingDirection.None;
     this._directionChanges = [];
+    this._lastFanAngle = this._fanAngle;
   }
 
   @HostListener('touchstart', ['$event'])
   onTouchStart(ev: TouchEvent)
   {
-    ev.preventDefault();
+    if(ev.touches.length !== 1) return;
 
-    if(ev.changedTouches.length !== 1) return;
+    //ev.preventDefault();
 
-    this.resetFan();
-
-    let touch = ev.changedTouches[0];
+    let touch = ev.touches[0];
     this.beginFanning({x: touch.clientX, y: touch.clientY});
   }
 
   @HostListener('touchmove', ['$event'])
   onTouchMove(ev: TouchEvent)
   {
-    ev.preventDefault();
+    if(ev.touches.length !== 1) return;
 
-    if(ev.changedTouches.length !== 1) return;
+    //ev.preventDefault();
 
-    let touch = ev.changedTouches[0];
+    let touch = ev.touches[0];
     this.performFanning({x: touch.clientX, y: touch.clientY});
   }
 
   @HostListener('touchend', ['$event'])
   onTouchEnd(ev: TouchEvent)
   {
-    ev.preventDefault();
-
     this.stopFanning();
   }
 
   @HostListener('touchcancel', ['$event'])
   onTouchCancel(ev: TouchEvent)
   {
-    ev.preventDefault();
-
     this.stopFanning();
   }
 
   @HostListener('mousedown', ['$event'])
   onMouseDown(ev) {
-    ev.preventDefault();
-
-    this.resetFan();
+    ev.preventDefault(); // Prevent dragging image
     this.beginFanning({ x: ev.clientX, y: ev.clientY });
   }
 

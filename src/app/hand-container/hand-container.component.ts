@@ -177,7 +177,7 @@ export class HandContainerComponent implements OnInit, OnDestroy {
   {
     if(ev.touches.length !== 1) return;
 
-    //ev.preventDefault();
+    ev.preventDefault();
 
     let touch = ev.touches[0];
     this.performFanning({x: touch.clientX, y: touch.clientY});

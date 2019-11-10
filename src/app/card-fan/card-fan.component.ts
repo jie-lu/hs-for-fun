@@ -36,9 +36,10 @@ export class CardFanComponent implements OnInit {
     if(ev.target.files.length == 0) return;
 
     let fileReader = new FileReader();
-    fileReader.onload = () => {
-      this.cardBack = fileReader.result;
+    fileReader.onloadend = () => {
+      let base64Str = btoa(fileReader.result as string);
+      this.cardBack = this.domSantitizer.bypassSecurityTrustUrl(`data:image/jpg;base64,${base64Str}`);
     };
-    fileReader.readAsDataURL(ev.target.files[0]);
+    fileReader.readAsBinaryString(ev.target.files[0]);
   }
 }

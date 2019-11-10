@@ -27,13 +27,13 @@ export class HandContainerComponent implements OnInit, OnDestroy {
   private cards: any[];
   private _calculator = new FanCalculator();
   private _onDestroy$ = new Subject<void>();
+
   private _touchStartPt: Point = null;
   private _fanAngle = 0;
   private _lastFanAngle = 0;
-  
-  private _initialMovingDirection = MovingDirection.None;
   private _directionChanges: DirectionChange[] = [];
   private _containerCenter: Point;
+  private _lastTapTime: number;
 
   constructor(private el:ElementRef, private changeDetectorRef: ChangeDetectorRef) {}
 
@@ -133,7 +133,10 @@ export class HandContainerComponent implements OnInit, OnDestroy {
   }
 
   private resetFan() {
-    this.updateCards(true);
+    this._lastTapTime = undefined;
+    this._lastFanAngle = 0;
+    this._fanAngle = 0;
+    this.updateCards(true, null, 0, 1);
   }
 
   private beginFanning(pt: Point) {
@@ -166,7 +169,18 @@ export class HandContainerComponent implements OnInit, OnDestroy {
   {
     if(ev.touches.length !== 1) return;
 
-    //ev.preventDefault();
+    ev.preventDefault();
+  
+    let lastTapTime = this._lastTapTime;
+    this._lastTapTime = Date.now();
+    if(lastTapTime){
+      let timeDiff = this._lastTapTime - lastTapTime;
+      if(timeDiff < 600) {
+        this.stopFanning();
+        this.resetFan();
+        return;
+      }
+    }
 
     let touch = ev.touches[0];
     this.beginFanning({x: touch.clientX, y: touch.clientY});
@@ -220,13 +234,13 @@ export class HandContainerComponent implements OnInit, OnDestroy {
     this.updateCards(initOnly, items);
   }
 
-  private updateCards(initOnly: boolean = false, items: any[] = null, angle: number = 360) {
+  private updateCards(initOnly: boolean = false, items: any[] = null, angle: number = 360, animationDuration = 0) {
     if(items === null) {
       items = this.cards;
     }
 
     items.forEach((item, i) => {
-      item.style = this._calculator.calculateStyle(i, items.length, angle, initOnly);
+      item.style = this._calculator.calculateStyle(i, items.length, angle, initOnly, animationDuration);
     });
 
     this.cards = items;

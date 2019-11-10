@@ -12,7 +12,7 @@ export class FanCalculator {
 		return null;
 	}
 
-	calculateStyle(i: number, count: number, fanAngle: number, initOnly: boolean = false) : object
+	calculateStyle(i: number, count: number, fanAngle: number, initOnly: boolean = false, animationDuration: number = 0) : object
 	{
 		let ret = {
 			'width': `${this.cardSize.width}px`,
@@ -23,12 +23,17 @@ export class FanCalculator {
 			'margin-left': `${-this.cardSize.width / 2}px`,
 			'margin-top': `${-this.cardSize.height}px`,
 			'transform-origin': 'center bottom',
-			'transform': 'unset'
+			'transform': 'unset',
+			'transition': 'unset'
 		};
 
 		if (!initOnly) {
 			let rotationX = i * fanAngle / count;
 			ret.transform = `rotate(${rotationX}deg)`;
+		}
+
+		if(animationDuration > 0) {
+			ret.transition = `all ${animationDuration}s`;
 		}
 
 		return ret;

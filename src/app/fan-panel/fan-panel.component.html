@@ -1,9 +1,9 @@
-<app-hand-container [cards$]="sharedDataService.hand$"
+<fan-container [cards$]="sharedDataService.hand$"
 					style="height: 100vh;">
 	<ng-template #cardTemplate let-card let-index="index">
 		<img [src]="this.cardBack" style="height: 100%; width: 100%;"/>
 	</ng-template>
-</app-hand-container>
+</fan-container>
 
 <div style="position:fixed; left:0; top:0">
 	<input

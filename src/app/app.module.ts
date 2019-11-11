@@ -4,16 +4,16 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HandContainerComponent } from './hand-container/hand-container.component';
+import { FanContainerComponent } from './fan-container/fan-container.component';
 import { AppBaseUrlInterceptor } from './app-base-url-interceptor';
 import { CardResolver } from './resovlers/card-resolver';
-import { CardFanComponent } from './card-fan/card-fan.component';
+import { FanPanelComponent } from './fan-panel/fan-panel.component';
 
 @NgModule({
    declarations: [
       AppComponent,
-      HandContainerComponent,
-      CardFanComponent
+      FanContainerComponent,
+      FanPanelComponent
    ],
    imports: [
       BrowserModule,

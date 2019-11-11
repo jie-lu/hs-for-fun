@@ -4,11 +4,11 @@ import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-card-fan',
-  templateUrl: './card-fan.component.html',
-  styleUrls: ['./card-fan.component.less']
+  selector: 'fan-panel',
+  templateUrl: './fan-panel.component.html',
+  styleUrls: ['./fan-panel.component.less']
 })
-export class CardFanComponent implements OnInit {
+export class FanPanelComponent implements OnInit {
   defaultCardBack: any;
   cardBack: any;
 

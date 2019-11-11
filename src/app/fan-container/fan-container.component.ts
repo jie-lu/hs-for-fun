@@ -1,8 +1,7 @@
 import { Component, Input, OnInit, OnDestroy, ElementRef, HostListener, ContentChild, ChangeDetectionStrategy, ChangeDetectorRef, TemplateRef } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { FanCalculator } from '../style-calculators/fan-calculator';
-import { Point } from '../shared-models/calculation-models';
+import { Point, Size } from '../shared-models/calculation-models';
 
 enum MovingDirection {
   None = 0,
@@ -16,17 +15,22 @@ interface DirectionChange {
 }
 
 @Component({
-  selector: 'app-hand-container',
-  templateUrl: './hand-container.component.html',
-  styleUrls: ['./hand-container.component.less'],
+  selector: 'fan-container',
+  templateUrl: './fan-container.component.html',
+  styleUrls: ['./fan-container.component.less'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HandContainerComponent implements OnInit, OnDestroy {
+export class FanContainerComponent implements OnInit, OnDestroy {
   @Input() cards$:Observable<any[]>;
 
   private cards: any[];
-  private _calculator = new FanCalculator();
   private _onDestroy$ = new Subject<void>();
+
+  private _containerSize: Size;
+	private _cardSize: Size = {
+		width: 150,
+		height: 200
+	}
 
   private _touchStartPt: Point = null;
   private _fanAngle = 0;
@@ -39,14 +43,20 @@ export class HandContainerComponent implements OnInit, OnDestroy {
 
   private initContainerSize() {
     let containerRect = this.el.nativeElement.getBoundingClientRect();
-    this._calculator.setContainerSize({
+    this._containerSize = {
       width: this.el.nativeElement.clientWidth,
       height: this.el.nativeElement.clientHeight
-    });
+    };
     this._containerCenter = {
       x: this.el.nativeElement.clientWidth / 2,
       y: this.el.nativeElement.clientHeight / 2
     };
+
+    let w = Math.max(20, Math.min(this._containerSize.width, this._containerSize.height) - 40);
+		this._cardSize = {
+			width: w / 2 * 0.75,
+			height: w / 2
+		};
   }
 
   ngOnInit() {
@@ -71,6 +81,49 @@ export class HandContainerComponent implements OnInit, OnDestroy {
     this.updateCards(false, null, this._fanAngle);
   }
 
+  calculateStyle(i: number, count: number, fanAngle: number, initOnly: boolean = false, animationDuration: number = 0) : object
+	{
+		let ret = {
+			'width': `${this._cardSize.width}px`,
+			'height': `${this._cardSize.height}px`,
+			'position': 'absolute',
+			'top': '50%',
+			'left': '50%',
+			'margin-left': `${-this._cardSize.width / 2}px`,
+			'margin-top': `${-this._cardSize.height}px`,
+			'transform-origin': 'center bottom',
+			'transform': 'unset',
+			'transition': 'unset'
+		};
+
+		if (!initOnly) {
+			let rotationX = i * fanAngle / count;
+			ret.transform = `rotate(${rotationX}deg)`;
+		}
+
+		if(animationDuration > 0) {
+			ret.transition = `all ${animationDuration}s`;
+		}
+
+		return ret;
+  }
+  
+  private onCardsChanged(items: any[], initOnly: boolean = false) {
+    this.updateCards(initOnly, items);
+  }
+
+  private updateCards(initOnly: boolean = false, items: any[] = null, angle: number = 360, animationDuration = 0) {
+    if(items === null) {
+      items = this.cards;
+    }
+
+    items.forEach((item, i) => {
+      item.style = this.calculateStyle(i, items.length, angle, initOnly, animationDuration);
+    });
+
+    this.cards = items;
+  }
+
   private distance(pt1: Point, pt2: Point) {
     return Math.sqrt((pt1.x - pt2.x) * (pt1.x - pt2.x) + (pt1.y - pt2.y) * (pt1.y - pt2.y));
   }
@@ -82,8 +135,8 @@ export class HandContainerComponent implements OnInit, OnDestroy {
     return Math.acos((d12 * d12 + d13 * d13 - d23 * d23) / (2 * d12 * d13)) / Math.PI * 180;
   }
 
-  private sideOfPointToLine(a: Point, b: Point, pt: Point) : MovingDirection{
-    let r = ((b.x - a.x)*(pt.y - a.y) - (b.y - a.y) * (pt.x - a.x));
+  private sideOfPointToLine(lineStartPt: Point, lineEndPt: Point, pt: Point) : MovingDirection{
+    let r = ((lineEndPt.x - lineStartPt.x)*(pt.y - lineStartPt.y) - (lineEndPt.y - lineStartPt.y) * (pt.x - lineStartPt.x));
     if(r === 0) return MovingDirection.None;
     else if(r < 0) return MovingDirection.Left;
     else return MovingDirection.Right;
@@ -136,10 +189,10 @@ export class HandContainerComponent implements OnInit, OnDestroy {
     this._lastTapTime = undefined;
     this._lastFanAngle = 0;
     this._fanAngle = 0;
-    this.updateCards(true, null, 0, 1);
+    this.updateCards(true, null, this._fanAngle, 1);
   }
 
-  private resetIfDoubleTapped(): boolean {
+  private resetFanOnDoubleTapped(): boolean {
     let lastTapTime = this._lastTapTime;
     this._lastTapTime = Date.now();
     if(lastTapTime){
@@ -186,7 +239,7 @@ export class HandContainerComponent implements OnInit, OnDestroy {
 
     ev.preventDefault();
   
-    if(this.resetIfDoubleTapped()) return;
+    if(this.resetFanOnDoubleTapped()) return;
 
     let touch = ev.touches[0];
     this.beginFanning({x: touch.clientX, y: touch.clientY});
@@ -219,7 +272,7 @@ export class HandContainerComponent implements OnInit, OnDestroy {
   onMouseDown(ev) {
     ev.preventDefault(); // Prevent dragging image
 
-    if(this.resetIfDoubleTapped()) return;
+    if(this.resetFanOnDoubleTapped()) return;
 
     this.beginFanning({ x: ev.clientX, y: ev.clientY });
   }
@@ -237,21 +290,5 @@ export class HandContainerComponent implements OnInit, OnDestroy {
   @HostListener('mouseleave')
   onMouseLeave() {
     this.stopFanning();
-  }
-
-  private onCardsChanged(items: any[], initOnly: boolean = false) {
-    this.updateCards(initOnly, items);
-  }
-
-  private updateCards(initOnly: boolean = false, items: any[] = null, angle: number = 360, animationDuration = 0) {
-    if(items === null) {
-      items = this.cards;
-    }
-
-    items.forEach((item, i) => {
-      item.style = this._calculator.calculateStyle(i, items.length, angle, initOnly, animationDuration);
-    });
-
-    this.cards = items;
   }
 }

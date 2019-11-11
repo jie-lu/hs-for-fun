@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Subject, BehaviorSubject } from 'rxjs'
-import { FanCalculator } from '../style-calculators/fan-calculator';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +7,6 @@ import { FanCalculator } from '../style-calculators/fan-calculator';
 export class SharedDataService {
   private _handSource = new BehaviorSubject<any[]>([]);
   private _cards = [];
-  private _fanCalculator = new FanCalculator();
 
   hand$ = this._handSource.asObservable();
 

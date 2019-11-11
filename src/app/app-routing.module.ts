@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { CardResolver } from './resovlers/card-resolver';
-import { CardFanComponent } from './card-fan/card-fan.component';
+import { FanPanelComponent } from './fan-panel/fan-panel.component';
 
 
 const routes: Routes = [{ 
@@ -11,7 +11,7 @@ const routes: Routes = [{
   redirectTo: 'home' 
 }, { 
   path: 'home',
-  component: CardFanComponent,
+  component: FanPanelComponent,
   resolve: {
     defaultCardBack: CardResolver
   } 

@@ -1,15 +1,7 @@
-<fan-container [cards$]="sharedDataService.hand$"
-					style="height: 100vh;">
+<card-back-selector class="top" (cardBackChanged)="onCardBackChanged($event)"></card-back-selector>
+
+<fan-container class="body" [cards$]="sharedDataService.hand$">
 	<ng-template #cardTemplate let-card let-index="index">
 		<img [src]="this.cardBack" style="height: 100%; width: 100%;"/>
 	</ng-template>
 </fan-container>
-
-<div style="position:fixed; left:0; top:0">
-	<input
-		style="display: none"
-		accept="image/png, image/jpeg"
-		type="file" (change)="onCardBackChanged($event)"
-		#fileInput>
-	<button (click)="fileInput.click()">Select File</button>
-</div>

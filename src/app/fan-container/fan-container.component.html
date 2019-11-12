@@ -1,9 +1,7 @@
-<div class="hand-container">
-  <div *ngFor="let card of cards$ | async; index as i;" class="card animation card-in-hand" [ngStyle]="card.style">
-    <ng-container *ngIf="card.style">
-      <ng-container *ngTemplateOutlet="cardTemplate, context: {$implicit: card, index: i}">
-      </ng-container>
+<div *ngFor="let card of cards$ | async; index as i;" class="card animation card-in-hand" [ngStyle]="card.style">
+  <ng-container *ngIf="card.style">
+    <ng-container *ngTemplateOutlet="cardTemplate, context: {$implicit: card, index: i}">
     </ng-container>
-  </div>
+  </ng-container>
 </div>
 

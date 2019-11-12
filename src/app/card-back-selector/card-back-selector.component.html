@@ -1,0 +1,9 @@
+<input
+    style="display: none"
+    accept="image/png, image/jpeg"
+    type="file" (change)="selectCustomImage($event)"
+    #fileInput>
+<img class="card-back" *ngIf="customCardBack; else addButton" [src]="customCardBack" (click)="fileInput.click()" />
+<ng-template #addButton><button class="card-back" (click)="fileInput.click()">+</button></ng-template>  
+
+<img class="card-back" *ngFor="let image of this.cardBacks" [src]="image" (click)="selectCardBack(image)"/>

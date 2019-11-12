@@ -8,12 +8,14 @@ import { FanContainerComponent } from './fan-container/fan-container.component';
 import { AppBaseUrlInterceptor } from './app-base-url-interceptor';
 import { CardResolver } from './resovlers/card-resolver';
 import { FanPanelComponent } from './fan-panel/fan-panel.component';
+import { CardBackSelectorComponent } from './card-back-selector/card-back-selector.component';
 
 @NgModule({
    declarations: [
       AppComponent,
       FanContainerComponent,
-      FanPanelComponent
+      FanPanelComponent,
+      CardBackSelectorComponent
    ],
    imports: [
       BrowserModule,

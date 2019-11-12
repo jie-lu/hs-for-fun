@@ -32,13 +32,7 @@ export class FanPanelComponent implements OnInit {
     this.sharedDataService.drawCard(54);
   }
 
-  onCardBackChanged(ev) {
-    if(ev.target.files.length == 0) return;
-
-    let fileReader = new FileReader();
-    fileReader.onloadend = () => {
-      this.cardBack = fileReader.result;
-    };
-    fileReader.readAsDataURL(ev.target.files[0]);
+  onCardBackChanged(imageSrc) {
+    this.cardBack = imageSrc;
   }
 }

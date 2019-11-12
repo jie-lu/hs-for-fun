@@ -9,11 +9,11 @@ export class CardResolver implements Resolve<any> {
 	constructor(private http: HttpClient) {}
 
 	resolve(_route: ActivatedRouteSnapshot, _state: RouterStateSnapshot) {
-		return this.http.get('assets/ventus_back.jpg', {
+		return this.http.get('assets/card-backs/ventus_back.jpg', {
 			headers: {
 				Accept: '*/*'
 			},
 			responseType: 'arraybuffer'
-		}).pipe(delay(1000));
+		});
 	}
 }

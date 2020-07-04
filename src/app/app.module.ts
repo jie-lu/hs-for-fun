@@ -9,13 +9,15 @@ import { AppBaseUrlInterceptor } from './app-base-url-interceptor';
 import { CardResolver } from './resovlers/card-resolver';
 import { FanPanelComponent } from './fan-panel/fan-panel.component';
 import { CardBackSelectorComponent } from './card-back-selector/card-back-selector.component';
+import { CardBackMakerComponent } from './card-back-maker/card-back-maker.component';
 
 @NgModule({
    declarations: [
       AppComponent,
       FanContainerComponent,
       FanPanelComponent,
-      CardBackSelectorComponent
+      CardBackSelectorComponent,
+      CardBackMakerComponent
    ],
    imports: [
       BrowserModule,

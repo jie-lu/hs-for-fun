@@ -1,3 +1,6 @@
+<button class="card-back" (click)="cardBackMaker.selectImage()"><span>+</span></button>
+<app-card-back-maker #cardBackMaker (imageGenerated)="onCardBackChanged2($event)" style="display: none;"></app-card-back-maker>
+
 <input
     style="display: none"
     accept="image/png, image/jpeg"

@@ -10,12 +10,14 @@ export class CardBackSelectorComponent implements OnInit {
   constructor() { }
 
   selectedCardBack: any;
+  selectedCardBack2: any;
   customCardBack: any;
   cardBacks: any[] = [
     'assets/card-backs/ventus_back.jpg',
     'assets/card-backs/hearthstone/classic.jpg', 
     'assets/card-backs/hearthstone/mark_of_hakkar.png'];
   @Output() cardBackChanged = new EventEmitter();
+  @Output() cardBackChanged2 = new EventEmitter<string[]>();
 
   ngOnInit() {
   }
@@ -23,6 +25,11 @@ export class CardBackSelectorComponent implements OnInit {
   selectCardBack(image) {
     this.selectedCardBack = image;
     this.cardBackChanged.emit(image);
+  }
+
+  onCardBackChanged2(imgDataURLs: string[]) {
+    this.selectedCardBack = imgDataURLs;
+    this.cardBackChanged2.emit(imgDataURLs);
   }
 
   selectCustomImage(ev) {

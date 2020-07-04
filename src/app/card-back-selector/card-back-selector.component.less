@@ -1,7 +1,8 @@
 :host {
     display: flex;
     flex-flow: row;
-    justify-content: center;
+    //justify-content: center;
+    overflow-x: auto;
     position: relative;
 }
 
@@ -17,10 +18,21 @@
 	z-index: -1;
 }
 
+
+
 .card-back {
     height: 100px;
     width: 75px;
+    min-width: 75px;
     margin: 0 10px;
     border-radius: 3px;
     font-size: 70px;
+
+    &:first-child {
+        margin-left: auto;
+    }
+    
+    &:last-child {
+        margin-right: auto;
+    }
 }

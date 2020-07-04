@@ -92,12 +92,12 @@ export class FanContainerComponent implements OnInit, OnDestroy {
 			'margin-left': `${-this._cardSize.width / 2}px`,
 			'margin-top': `${-this._cardSize.height}px`,
 			'transform-origin': 'center bottom',
-			'transform': 'unset',
+			'transform': 'rotate(-90deg)',
 			'transition': 'unset'
 		};
 
 		if (!initOnly) {
-			let rotationX = i * fanAngle / count;
+			let rotationX = i * fanAngle / count - 90;
 			ret.transform = `rotate(${rotationX}deg)`;
 		}
 

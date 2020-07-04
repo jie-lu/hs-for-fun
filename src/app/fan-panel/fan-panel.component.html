@@ -1,7 +1,12 @@
-<card-back-selector class="top" (cardBackChanged)="onCardBackChanged($event)"></card-back-selector>
+<card-back-selector class="top" (cardBackChanged)="onCardBackChanged($event)"
+  (cardBackChanged2)="onCardBackChanged2($event)"></card-back-selector>
 
 <fan-container class="body" [cards$]="sharedDataService.hand$">
 	<ng-template #cardTemplate let-card let-index="index">
-		<img [src]="this.cardBack" style="height: 100%; width: 100%;"/>
+		<img [src]="this.getCardBack(index)" style="height: 100%; width: 100%;"
+			[ngClass]="{border: useMultipleCardBacks }" />
+		<!-- <div style="height: 100%; width: 100%; font-size: 200px; background-color: lightgray;">
+			<div [ngStyle]="{'transform': 'translateX(' + (-800.0/54*index).toString() + 'px)translateY(-50px)'}">Happy Birthday!</div>
+		</div> -->
 	</ng-template>
 </fan-container>

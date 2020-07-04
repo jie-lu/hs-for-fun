@@ -11,10 +11,20 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 export class FanPanelComponent implements OnInit {
   defaultCardBack: any;
   cardBack: any;
+  cardBacks: string[] = [];
+  useMultipleCardBacks: boolean = false;
 
   constructor(public sharedDataService: SharedDataService,
     private activatedRoute: ActivatedRoute,
     private domSantitizer: DomSanitizer) { 
+  }
+
+  getCardBack(index: number) {
+    if(this.useMultipleCardBacks && this.cardBacks.length > 0) {
+      return this.cardBacks[Math.min(index, this.cardBacks.length)];
+    }
+
+    return this.cardBack
   }
 
   private convertImageToBase64(data: ArrayBuffer): SafeUrl {
@@ -33,6 +43,12 @@ export class FanPanelComponent implements OnInit {
   }
 
   onCardBackChanged(imageSrc) {
+    this.useMultipleCardBacks = false;
     this.cardBack = imageSrc;
+  }
+
+  onCardBackChanged2(imageDataURLs: string[]) {
+    this.useMultipleCardBacks = true;
+    this.cardBacks = imageDataURLs;
   }
 }

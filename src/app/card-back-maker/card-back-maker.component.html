@@ -1,0 +1,17 @@
+<img #image style="display: none;" (load)="onImageLoad($event)"/>
+<div style="position: relative;">
+    <div style="display: flex; flex-direction: row;">
+        <button (click)="fileInput.click()">Load...</button>
+        <input
+            style="display: none"
+            accept="image/png, image/jpeg"
+            type="file" (change)="onImageSelected($event)"
+            #fileInput>
+            <button (click)="transformImageDegree(45)">Test</button>
+    </div>
+
+    
+    <canvas #canvas></canvas>
+    <canvas #selectionCanvas style="display:none"></canvas>
+    <img #selectionRect style="position: absolute; left: 400px; top: 50px; border: solid 1px gray; background: transparent;" />
+</div>

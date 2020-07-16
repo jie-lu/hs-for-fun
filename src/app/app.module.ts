@@ -10,6 +10,7 @@ import { CardResolver } from './resovlers/card-resolver';
 import { FanPanelComponent } from './fan-panel/fan-panel.component';
 import { CardBackSelectorComponent } from './card-back-selector/card-back-selector.component';
 import { CardBackMakerComponent } from './card-back-maker/card-back-maker.component';
+import { TextOutputComponent } from './text-output/text-output.component';
 
 @NgModule({
    declarations: [
@@ -17,7 +18,8 @@ import { CardBackMakerComponent } from './card-back-maker/card-back-maker.compon
       FanContainerComponent,
       FanPanelComponent,
       CardBackSelectorComponent,
-      CardBackMakerComponent
+      CardBackMakerComponent,
+      TextOutputComponent
    ],
    imports: [
       BrowserModule,

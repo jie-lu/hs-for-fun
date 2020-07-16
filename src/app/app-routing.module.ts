@@ -4,6 +4,7 @@ import { AppComponent } from './app.component';
 import { CardResolver } from './resovlers/card-resolver';
 import { FanPanelComponent } from './fan-panel/fan-panel.component';
 import { CardBackMakerComponent } from './card-back-maker/card-back-maker.component';
+import { TextOutputComponent } from './text-output/text-output.component';
 
 
 const routes: Routes = [{ 
@@ -14,11 +15,14 @@ const routes: Routes = [{
   path: 'home',
   component: FanPanelComponent,
   resolve: {
-    defaultCardBack: CardResolver
+    defaultCardBacks: CardResolver
   } 
 }, { 
   path: 'canvas',
   component: CardBackMakerComponent,
+}, { 
+  path: 'text-output',
+  component: TextOutputComponent,
 }];
 
 @NgModule({

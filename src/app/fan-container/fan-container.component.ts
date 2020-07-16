@@ -18,7 +18,7 @@ interface DirectionChange {
   selector: 'fan-container',
   templateUrl: './fan-container.component.html',
   styleUrls: ['./fan-container.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FanContainerComponent implements OnInit, OnDestroy {
   @Input() cards$:Observable<any[]>;
@@ -54,7 +54,7 @@ export class FanContainerComponent implements OnInit, OnDestroy {
 
     let w = Math.max(20, Math.min(this._containerSize.width, this._containerSize.height) - 40);
 		this._cardSize = {
-			width: w / 2 * 0.75,
+			width: w / 2 * 0.7135,
 			height: w / 2
 		};
   }
@@ -112,7 +112,7 @@ export class FanContainerComponent implements OnInit, OnDestroy {
     this.updateCards(initOnly, items);
   }
 
-  private updateCards(initOnly: boolean = false, items: any[] = null, angle: number = 360, animationDuration = 0) {
+  public updateCards(initOnly: boolean = false, items: any[] = null, angle: number = 360, animationDuration = 0) {
     if(items === null) {
       items = this.cards;
     }
@@ -122,6 +122,7 @@ export class FanContainerComponent implements OnInit, OnDestroy {
     });
 
     this.cards = items;
+    this._fanAngle = angle;
   }
 
   private distance(pt1: Point, pt2: Point) {
@@ -226,7 +227,7 @@ export class FanContainerComponent implements OnInit, OnDestroy {
     this.updateCards(false, null, this._fanAngle);
   }
 
-  private stopFanning() {
+  public stopFanning() {
     this._touchStartPt = null;
     this._directionChanges = [];
     this._lastFanAngle = this._fanAngle;

@@ -1,4 +1,5 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, ComponentRef } from '@angular/core';
+import { CardBackMakerComponent } from '../card-back-maker/card-back-maker.component';
 
 @Component({
   selector: 'card-back-selector',
@@ -18,6 +19,10 @@ export class CardBackSelectorComponent implements OnInit {
     'assets/card-backs/hearthstone/mark_of_hakkar.png'];
   @Output() cardBackChanged = new EventEmitter();
   @Output() cardBackChanged2 = new EventEmitter<string[]>();
+  @Output() everyCardBackChanged = new EventEmitter<{ image: string, index: number }>();
+
+  @ViewChild(CardBackMakerComponent, { static: true})
+  cardBackMaker: CardBackMakerComponent;
 
   ngOnInit() {
   }
@@ -25,6 +30,10 @@ export class CardBackSelectorComponent implements OnInit {
   selectCardBack(image) {
     this.selectedCardBack = image;
     this.cardBackChanged.emit(image);
+  }
+
+  onEveryCardBackChanged(imageItem: { image: string, index: number }) {
+    this.everyCardBackChanged.emit(imageItem);
   }
 
   onCardBackChanged2(imgDataURLs: string[]) {
@@ -41,5 +50,9 @@ export class CardBackSelectorComponent implements OnInit {
       this.selectCardBack(this.customCardBack);
     };
     fileReader.readAsDataURL(ev.target.files[0]);
+  }
+
+  setFanningImageDataURL(imageDataURL: string) {
+    this.cardBackMaker.setImageDataURL(imageDataURL);
   }
 }

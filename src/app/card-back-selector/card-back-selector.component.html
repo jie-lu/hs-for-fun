@@ -1,5 +1,7 @@
 <button class="card-back" (click)="cardBackMaker.selectImage()"><span>+</span></button>
-<app-card-back-maker #cardBackMaker (imageGenerated)="onCardBackChanged2($event)" style="display: none;"></app-card-back-maker>
+<app-card-back-maker #cardBackMaker (imagesGenerated)="onCardBackChanged2($event)" 
+    (everyImageGenerated)="onEveryCardBackChanged($event)"
+    style="display: none;"></app-card-back-maker>
 
 <input
     style="display: none"

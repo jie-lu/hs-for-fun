@@ -23,4 +23,6 @@ export class SharedDataService {
 
     this._handSource.next(this._cards);
   }
+
+  cardBackText: string;
 }

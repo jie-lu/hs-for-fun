@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter, NgZone } from '@angular/core';
 import { Rect, Point } from '../shared-models/calculation-models';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -9,7 +9,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class CardBackMakerComponent implements OnInit {
 
-  constructor(private domSantitizer: DomSanitizer) { }
+  constructor(private domSantitizer: DomSanitizer,
+    private ngZone: NgZone) { }
 
   @ViewChild('image', {static: true})
   image: ElementRef<HTMLImageElement>;
@@ -27,7 +28,11 @@ export class CardBackMakerComponent implements OnInit {
   fileInput: ElementRef<HTMLInputElement>;
 
   @Output() 
-  imageGenerated = new EventEmitter<string[]>();
+  imagesGenerated = new EventEmitter<string[]>();
+
+  @Output() 
+  everyImageGenerated = new EventEmitter<{image: string, index: number}>();
+
 
   private ctx: CanvasRenderingContext2D;
   private selectionCtx: CanvasRenderingContext2D;
@@ -56,6 +61,10 @@ export class CardBackMakerComponent implements OnInit {
     fileReader.readAsDataURL(event.target.files[0]);
   }
 
+  setImageDataURL(imageDataURL: string) {
+    this.image.nativeElement.src = imageDataURL;
+  }
+
   onImageLoad(event) {
     const maxSize = 1024;
     let canvasW = this.image.nativeElement.width;
@@ -76,6 +85,8 @@ export class CardBackMakerComponent implements OnInit {
     console.log('image size:', this.image.nativeElement.width, this.image.nativeElement.height);
     console.log('canvas size:', this.canvas.nativeElement.width, this.canvas.nativeElement.height);
 
+    this.ctx.clearRect(0, 0,
+      this.canvas.nativeElement.width, this.canvas.nativeElement.height);
     this.ctx.drawImage(this.image.nativeElement, 0, 0,
       this.canvas.nativeElement.width, this.canvas.nativeElement.height);
 
@@ -83,12 +94,27 @@ export class CardBackMakerComponent implements OnInit {
     const count = 54;
     const angleOffset = 90 * Math.PI/180;
     const direction = -1;
-    for(let i = 0; i < count; i++) {
-      const imgDataURL = this.getImageFromCenter(direction * (360.0 / count) * i * Math.PI/180 + angleOffset);
-      images.push(imgDataURL);
-    }
-    this.imageGenerated.emit(images);
+
+    this.getImageRecursively(0, count);
+    this.imagesGenerated.emit(images);
     //this.imageSelection.nativeElement.src = imgDataURL;
+  }
+
+  getImageRecursively(i: number, count: number) {
+    if(i >= count) return;
+
+    const angleOffset = 90 * Math.PI/180;
+    const direction = -1;
+    setTimeout(() => {
+      console.log('generating card back', i);
+        //const imgDataURL = this.getImageFromCenter(direction * (360.0 / count) * i * Math.PI/180 + angleOffset);
+        const imgDataURL = this.getImageFromBottomCenter(direction * (190.0 / count) * i * Math.PI/180 + angleOffset);
+        //images.push(imgDataURL);
+
+        this.everyImageGenerated.emit({ image: imgDataURL, index: i });
+
+        this.getImageRecursively(i + 1, count);
+    }, 0);
   }
 
   getElementRect(el: HTMLElement): Rect {
@@ -104,6 +130,11 @@ export class CardBackMakerComponent implements OnInit {
 
   getImage(angle: number, pivotPoint: Point, selectionRect: Rect): string {
     this.ctx.save();
+    // this.ctx.clearRect(0, 0,
+    //   this.canvas.nativeElement.width, this.canvas.nativeElement.height);
+    this.ctx.fillStyle = 'rgb(42,50,124)';
+    this.ctx.fillRect(0, 0,
+      this.canvas.nativeElement.width, this.canvas.nativeElement.height);
     this.ctx.translate(pivotPoint.x, pivotPoint.y);
     this.ctx.rotate(angle);
     this.ctx.translate(-pivotPoint.x, -pivotPoint.y);
@@ -132,6 +163,25 @@ export class CardBackMakerComponent implements OnInit {
       y: this.canvas.nativeElement.height / 2 - h,
       width: w,
       height: h,
+    }
+
+    return this.getImage(angle, pivotPoint, selectionRect);
+  }
+
+  getImageFromBottomCenter(angle: number): string {
+    const canvasMinSize = Math.min(this.canvas.nativeElement.width, this.canvas.nativeElement.height);
+    const whRatio = 0.7135; // w/h ratio of playing card(63.6mm/89mm)
+    const h = canvasMinSize / (whRatio/2 + 1);
+    const w = h * whRatio;
+    const selectionRect = {
+      x: this.canvas.nativeElement.width / 2 - w / 2,
+      y: 0,
+      width: w,
+      height: h,
+    }
+    const pivotPoint = {
+      x: this.canvas.nativeElement.width / 2,
+      y: h,
     }
 
     return this.getImage(angle, pivotPoint, selectionRect);

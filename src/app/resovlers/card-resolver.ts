@@ -26,6 +26,14 @@ export class CardResolver implements Resolve<any> {
 				responseType: 'arraybuffer'
 			});
 			return forkJoin([defaultCardBack$, birthdayImage$]);
+		} else if (today.getMonth() == 9 && (today.getDate() >= 30 && today.getDate() <= 31)) {
+			let birthdayImage$ = this.http.get('assets/card-backs/happy_birthday_1031.png', {
+				headers: {
+					Accept: '*/*'
+				},
+				responseType: 'arraybuffer'
+			});
+			return forkJoin([defaultCardBack$, birthdayImage$]);
 		} else {
 			return forkJoin([defaultCardBack$]);
 		}

@@ -34,14 +34,9 @@ steps:
   displayName: 'npm install and build'
 
 - powershell: |
-   git --version
-   Write-Host "setup author info"
-   git config user.email jie.lu@outlook.com
-   git config user.name "Jie Lu"
-   Write-Host "git commit with message"
-   git commit -a -m "Test Commit from Azure DevOps"
    Write-Host "git push"
    git push
+  displayName: Push package.json
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(System.DefaultWorkingDirectory)/docs'

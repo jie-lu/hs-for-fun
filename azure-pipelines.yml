@@ -18,5 +18,15 @@ steps:
 - script: |
     npm install -g @angular/cli
     npm install
+    npm version patch
     ng build --prod
   displayName: 'npm install and build'
+
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(System.DefaultWorkingDirectory)/docs'
+    Contents: |
+      **
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+- task: PublishBuildArtifacts@1

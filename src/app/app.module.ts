@@ -11,6 +11,8 @@ import { FanPanelComponent } from './fan-panel/fan-panel.component';
 import { CardBackSelectorComponent } from './card-back-selector/card-back-selector.component';
 import { CardBackMakerComponent } from './card-back-maker/card-back-maker.component';
 import { TextOutputComponent } from './text-output/text-output.component';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 @NgModule({
    declarations: [
@@ -24,7 +26,8 @@ import { TextOutputComponent } from './text-output/text-output.component';
    imports: [
       BrowserModule,
       HttpClientModule,
-      AppRoutingModule
+      AppRoutingModule,
+      ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
    ],
    providers: [
       { provide: HTTP_INTERCEPTORS, useClass: AppBaseUrlInterceptor, multi: true },

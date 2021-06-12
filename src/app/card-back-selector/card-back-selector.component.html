@@ -1,4 +1,4 @@
-<button class="card-back" (click)="cardBackMaker.selectImage()"><span>+</span></button>
+<div class="span card-back" (click)="cardBackMaker.selectImage()"><span>+</span></div>
 <app-card-back-maker #cardBackMaker (imagesGenerated)="onCardBackChanged2($event)" 
     (everyImageGenerated)="onEveryCardBackChanged($event)"
     style="display: none;"></app-card-back-maker>
@@ -9,6 +9,6 @@
     type="file" (change)="selectCustomImage($event)"
     #fileInput>
 <img class="card-back" *ngIf="customCardBack; else addButton" [src]="customCardBack" (click)="fileInput.click()" />
-<ng-template #addButton><button class="card-back" (click)="fileInput.click()">+</button></ng-template>  
+<ng-template #addButton><div class="card-back" (click)="fileInput.click()">+</div></ng-template>  
 
 <img class="card-back" *ngFor="let image of this.cardBacks" [src]="image" (click)="selectCardBack(image)"/>

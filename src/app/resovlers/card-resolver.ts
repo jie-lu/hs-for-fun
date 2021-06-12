@@ -34,7 +34,15 @@ export class CardResolver implements Resolve<any> {
 				responseType: 'arraybuffer'
 			});
 			return forkJoin([defaultCardBack$, birthdayImage$]);
-		} else {
+		} else if(today.getMonth() == 5 && (today.getDate() >= 12 && today.getDate() <= 14)) {
+			let img$ = this.http.get('assets/card-backs/lamp.jpg', {
+				headers: {
+					Accept: '*/*'
+				},
+				responseType: 'arraybuffer'
+			});
+			return forkJoin([defaultCardBack$, img$]);
+		}else {
 			return forkJoin([defaultCardBack$]);
 		}
 	}
